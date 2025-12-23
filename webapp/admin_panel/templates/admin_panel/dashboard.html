@@ -1,0 +1,128 @@
+<!-- webapp/admin_panel/templates/admin_panel/dashboard.html -->
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Dashboard - ISFT Bot{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Statistika kartochkalari -->
+    <div class="col-md-3">
+        <div class="stat-card">
+            <h3><i class="fas fa-user-graduate"></i> {{ total_students }}</h3>
+            <p>Jami Talabalar</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+            <h3><i class="fas fa-users"></i> {{ total_groups }}</h3>
+            <p>Jami Guruhlar</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+            <h3><i class="fas fa-clock"></i> {{ pending_receipts }}</h3>
+            <p>Kutilayotgan Cheklar</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+            <h3><i class="fas fa-check-circle"></i> {{ approved_receipts }}</h3>
+            <p>Tasdiqlangan</p>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Yaqin to'lovlar -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5><i class="fas fa-calendar-check"></i> Yaqin To'lovlar (30 kun)</h5>
+            </div>
+            <div class="card-body">
+                {% if upcoming_payments %}
+                    <div class="list-group">
+                        {% for payment in upcoming_payments %}
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h6 class="mb-1">{{ payment.academic_year }} - {{ payment.stage }}</h6>
+                                        <small class="text-muted">{{ payment.amount }} so'm</small>
+                                    </div>
+                                    <span class="badge bg-warning">{{ payment.due_date|date:"d.m.Y" }}</span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">Yaqin to'lovlar yo'q</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Oxirgi cheklar -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5><i class="fas fa-receipt"></i> Oxirgi Cheklar</h5>
+            </div>
+            <div class="card-body">
+                {% if recent_receipts %}
+                    <div class="list-group">
+                        {% for receipt in recent_receipts %}
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">{{ receipt.student.full_name }}</h6>
+                                        <small class="text-muted">
+                                            {{ receipt.payment_schedule.stage }} -
+                                            {{ receipt.submitted_at|date:"d.m.Y H:i" }}
+                                        </small>
+                                    </div>
+                                    {% if receipt.status == 'pending' %}
+                                        <span class="badge bg-warning">Kutilmoqda</span>
+                                    {% elif receipt.status == 'approved' %}
+                                        <span class="badge bg-success">Tasdiqlangan</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Rad etilgan</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">Cheklar yo'q</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5><i class="fas fa-chart-pie"></i> Cheklar Statistikasi</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-4">
+                        <h2 class="text-warning">{{ pending_receipts }}</h2>
+                        <p>Kutilmoqda</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h2 class="text-success">{{ approved_receipts }}</h2>
+                        <p>Tasdiqlangan</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h2 class="text-danger">{{ rejected_receipts }}</h2>
+                        <p>Rad etilgan</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

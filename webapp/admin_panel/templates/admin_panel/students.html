@@ -1,0 +1,98 @@
+<!-- webapp/admin_panel/templates/admin_panel/students.html -->
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Talabalar - ISFT Bot{% endblock %}
+{% block page_title %}👨‍🎓 Talabalar{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="fas fa-user-graduate"></i> Talabalar ro'yxati</h5>
+        <a href="/admin/admin_panel/student/add/" class="btn btn-light btn-sm">
+            <i class="fas fa-plus"></i> Yangi talaba
+        </a>
+    </div>
+    <div class="card-body">
+        <!-- Qidiruv va filtr -->
+        <form method="get" class="row g-3 mb-4">
+            <div class="col-md-6">
+                <input type="text" class="form-control" name="search" placeholder="Qidirish (ID, Ism, Familiya, JSHSHIR)..." value="{{ search }}">
+            </div>
+            <div class="col-md-4">
+                <select name="group" class="form-select">
+                    <option value="">Barcha guruhlar</option>
+                    {% for group in groups %}
+                        <option value="{{ group.id }}" {% if selected_group == group.id|stringformat:"s" %}selected{% endif %}>
+                            {{ group.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-search"></i> Qidirish
+                </button>
+            </div>
+        </form>
+
+        <!-- Talabalar jadvali -->
+        {% if students %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Talaba ID</th>
+                            <th>F.I.O</th>
+                            <th>Guruh</th>
+                            <th>Telefon</th>
+                            <th>Holat</th>
+                            <th>Amallar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in students %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td><strong>{{ student.student_id }}</strong></td>
+                                <td>
+                                    <a href="{% url 'admin_panel:student_detail' student.id %}">
+                                        {{ student.full_name }}
+                                    </a>
+                                </td>
+                                <td>
+                                    {% if student.group %}
+                                        <span class="badge bg-info">{{ student.group.name }}</span>
+                                    {% else %}
+                                        <span class="text-muted">—</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ student.phone }}</td>
+                                <td>
+                                    {% if student.is_active %}
+                                        <span class="badge bg-success">Faol</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Nofaol</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{% url 'admin_panel:student_detail' student.id %}" class="btn btn-sm btn-info">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="/admin/admin_panel/student/{{ student.id }}/change/" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> Talabalar topilmadi.
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
